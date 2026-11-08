@@ -584,6 +584,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/39/35/d7af5ed4e82f8bb43b36460e72b6d43f4ac16626d79e31d25c49e6bee697/langchain-1.4.9-py3-none-any.whl", hash = "sha256:87cf3c15dfddaebd0e421d253e3b4abf70b70d6e18e56c45b9eb1873cc46f154", size = 171661, upload-time = "2026-11-04T17:07:20.201Z" },
 ]
 
+[package.optional-dependencies]
+google-genai = [
+    { name = "langchain-google-genai" },
+]
+
 [[package]]
 name = "langchain-core"
 version = "1.7.6"
@@ -614,7 +619,7 @@ dependencies = [
     { name = "black" },
     { name = "dotenv" },
     { name = "isort" },
-    { name = "langchain" },
+    { name = "langchain", extra = ["google-genai"] },
     { name = "langchain-google-genai" },
 ]
 
@@ -623,7 +628,7 @@ requires-dist = [
     { name = "black", specifier = ">=26.10.1" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "isort", specifier = ">=9.0.2" },
-    { name = "langchain", specifier = ">=1.4.9" },
+    { name = "langchain", extras = ["google-genai"], specifier = ">=1.4.9" },
     { name = "langchain-google-genai", specifier = ">=4.4.3" },
 ]
 
