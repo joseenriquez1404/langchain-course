@@ -34,13 +34,17 @@ LANGSMITH_AGENT_ENVIRONMENT=tu_environment
 
 ## Cómo funciona
 
-`create_agent` recibe el modelo y la lista de tools, y el modelo decide cuándo llamar a la búsqueda. `agent.invoke()` devuelve un diccionario con toda la conversación, incluidas las llamadas a tools, y la respuesta final es el último mensaje:
+`create_agent` recibe el modelo, la lista de tools y `response_format=AgentResponse`. El modelo decide cuándo llamar a la búsqueda, y al terminar el agente entrega la respuesta con la forma de ese esquema de Pydantic: `answer` trae el texto y `sources` una lista de objetos `Source`, cada uno con su `url`.
+
+`agent.invoke()` devuelve un diccionario, y lo que normalmente quieres leer está en `structured_response`:
 
 ```python
-result["messages"][-1].text
+result["structured_response"].answer                        # la respuesta
+[s.url for s in result["structured_response"].sources]      # las URLs de las fuentes
+result["messages"]                                          # toda la conversación, con las llamadas a tools
 ```
 
-Usa `.text` en lugar de `.content`, porque con Gemini `.content` puede llegar como una lista de bloques en vez de un string.
+Si lees un mensaje suelto de `result["messages"]`, usa `.text` en lugar de `.content`, porque con Gemini `.content` puede llegar como una lista de bloques en vez de un string.
 
 ## Las dos versiones de la búsqueda
 
