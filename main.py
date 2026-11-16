@@ -1,6 +1,9 @@
 import os
+from operator import itemgetter
 from dotenv import load_dotenv
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -57,6 +60,32 @@ def retrieval_chain_without_lcel(query: str):
 
     return response.content
 
+def create_retrieval_chain_with_lcel():
+    """
+    Create a retrieval chain using LCEL
+    Returns a chain that can be invoked with {"question": ...}
+
+    Advantages:
+    - Declarative and composable.
+    - Built-in streaming.
+    - Built-in async support.
+    - Batch processing.
+    - Type safety.
+    - Less code
+    - Reusable
+    - Better debugging
+    """
+
+    retrieval_chain = (
+        RunnablePassthrough.assign(
+            context = itemgetter("question") | retriever | format_docs
+        )
+        |prompt_template
+        | llm
+        | StrOutputParser()
+    )
+    return retrieval_chain
+
 
 
 if __name__ == "__main__":
@@ -70,3 +99,11 @@ if __name__ == "__main__":
     result_without_lcel = retrieval_chain_without_lcel(query)
     print("\nAnswer without LCEL:\n")
     print(result_without_lcel)
+
+    print("\n" + "=" * 70)
+    print("Implementation 2 with LCEL")
+    print("=" * 70 + "\n")
+    retrieval_chain_with_lcel = create_retrieval_chain_with_lcel()
+    result_with_lcel = retrieval_chain_with_lcel.invoke({"question": query})
+    print("\nAnswer with LCEL:\n")
+    print(result_with_lcel)
